@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Minima -->
+  <!-- Hexo theme created by @adisaktijrs -->
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+
+  
+  <title>ebpf之bcc的安装及测试</title>
+  
+  <link rel="canonical" href="http://ianwoolf.github.io/2021/12/03/ebpf%E4%B9%8Bbcc%E7%9A%84%E5%AE%89%E8%A3%85%E5%8F%8A%E6%B5%8B%E8%AF%95/">
+  
+  <meta name="description" content="安装bcc的安装貌似有些坑，开始我再ubuntu上按照官方文档安装后运行失败了，有点帖子说需要自己编译安装。但是我的vps每次编译bcc都挂，后来换成centos8用下载rpm包安装成功了。 ubuntu 20.04尝试apt安装失败（issue），源码编译安装，机器负载过高失败。最后参考帖子下周r">
+  
+  
+  <meta name="author" content="John Doe">
+  
+  <meta property="og:image" content="http://ianwoolf.github.ioundefined">
+  
+  <meta property="og:site_name" content="ianwoolf的随想" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="ebpf之bcc的安装及测试" />
+  
+  <meta property="og:description" content="安装bcc的安装貌似有些坑，开始我再ubuntu上按照官方文档安装后运行失败了，有点帖子说需要自己编译安装。但是我的vps每次编译bcc都挂，后来换成centos8用下载rpm包安装成功了。 ubuntu 20.04尝试apt安装失败（issue），源码编译安装，机器负载过高失败。最后参考帖子下周r">
+  
+  <meta property="og:url" content="http://ianwoolf.github.io/2021/12/03/ebpf%E4%B9%8Bbcc%E7%9A%84%E5%AE%89%E8%A3%85%E5%8F%8A%E6%B5%8B%E8%AF%95/" />
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ebpf之bcc的安装及测试">
+  
+  <meta name="twitter:description" content="安装bcc的安装貌似有些坑，开始我再ubuntu上按照官方文档安装后运行失败了，有点帖子说需要自己编译安装。但是我的vps每次编译bcc都挂，后来换成centos8用下载rpm包安装成功了。 ubuntu 20.04尝试apt安装失败（issue），源码编译安装，机器负载过高失败。最后参考帖子下周r">
+  
+  
+  <meta name="twitter:image" content="http://ianwoolf.github.ioundefined">
+  
+  <meta name="twitter:url" content="http://ianwoolf.github.io/2021/12/03/ebpf%E4%B9%8Bbcc%E7%9A%84%E5%AE%89%E8%A3%85%E5%8F%8A%E6%B5%8B%E8%AF%95/" />
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Preload fonts
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="preload" href="../fonts/dm-serif-display-v4-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../fonts/inter-v2-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+<link rel="stylesheet" href="/css/normalize.css">
+
+  
+<link rel="stylesheet" href="/css/skeleton.css">
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+  
+<link rel="stylesheet" href="/css/prism-dark.css">
+
+  
+<link rel="stylesheet" href="/css/prism-line-numbers.css">
+
+  <!-- User css -->
+  
+  
+<link rel="stylesheet" href="/css/user.css">
+
+  
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+
+  <!-- Custom Theme Color Style
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <style>
+  a:not(.icon) {
+    text-decoration-color: #0FA0CE;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 50%,
+      #0FA0CE 50%
+    );
+  }
+  blockquote {
+    border-left: 8px solid #0FA0CE;
+  }
+  .nanobar .bar {
+    background: #0FA0CE;
+  }
+  .button.button-primary:hover,
+  button.button-primary:hover,
+  input[type="submit"].button-primary:hover,
+  input[type="reset"].button-primary:hover,
+  input[type="button"].button-primary:hover,
+  .button.button-primary:focus,
+  button.button-primary:focus,
+  input[type="submit"].button-primary:focus,
+  input[type="reset"].button-primary:focus,
+  input[type="button"].button-primary:focus {
+    background-color: #0FA0CE;
+    border-color: #0FA0CE;
+  }
+  input[type="email"]:focus,
+  input[type="number"]:focus,
+  input[type="search"]:focus,
+  input[type="text"]:focus,
+  input[type="tel"]:focus,
+  input[type="url"]:focus,
+  input[type="password"]:focus,
+  textarea:focus,
+  select:focus {
+    border: 1px solid #0FA0CE;
+  }
+</style>
+
+  <!-- Google Analytics (With Privacy Settings On)
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div>
+
+        <div class="row">
+  <div class="two columns" style="max-width: 50px">
+    <h1 class="mt-2 mode">
+      <div onclick=setDarkMode(true) id="darkBtn">🌑</div>
+      <div onclick=setDarkMode(false) id="lightBtn" class=hidden>☀️</div>
+      <script >
+        if (localStorage.getItem('preferredTheme') == 'dark') {
+          setDarkMode(true)
+        }
+        function setDarkMode(isDark) {
+          var darkBtn = document.getElementById('darkBtn')
+          var lightBtn = document.getElementById('lightBtn')
+          if (isDark) {
+            lightBtn.style.display = "block"
+            darkBtn.style.display = "none"
+            localStorage.setItem('preferredTheme', 'dark');
+          } else {
+            lightBtn.style.display = "none"
+            darkBtn.style.display = "block"
+            localStorage.removeItem('preferredTheme');
+          }
+          document.body.classList.toggle("darkmode");
+        }
+      </script>
+    </h1>
+  </div>
+
+  <div class="six columns ml-1">
+    <h1 class="mt-2">
+      Hi Folks.
+    </h1>
+  </div>
+
+  <div class="twelve columns">
+    <div class="row">
+      <div class="nine columns left">
+        <a href="/">Home</a>
+        
+          
+          <a href="/Works" class="ml">Works</a>
+          
+        
+          
+          <a href="/About" class="ml">About</a>
+          
+        
+        
+          
+            <a href="mailto:test@test.test" target="_blank" class="ml">Email</a>
+          
+        
+      </div>
+    </div>
+    <hr style="margin-bottom: 2.6rem">
+  </div>
+</div>
+
+        <div class="trans">
+            <h2>ebpf之bcc的安装及测试</h2>
+
+  <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>bcc的安装貌似有些坑，开始我再ubuntu上按照<a target="_blank" rel="noopener" href="https://github.com/iovisor/bcc/blob/master/INSTALL.md#ubuntu---source">官方文档</a>安装后运行失败了，有点帖子说需要自己编译安装。但是我的vps每次编译bcc都挂，后来换成centos8用下载rpm包安装成功了。</p>
+<h3 id="ubuntu-20-04"><a href="#ubuntu-20-04" class="headerlink" title="ubuntu 20.04"></a>ubuntu 20.04</h3><p>尝试apt安装失败（<a target="_blank" rel="noopener" href="https://github.com/iovisor/gobpf/issues/214">issue</a>），源码编译安装，机器负载过高失败。最后参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42306122/article/details/104935911">帖子</a>下周release的源码编译安装，机器仍然负载过高没有结果。</p>
+<p>这tm也太曲折了。可现在<code>ebpf</code>这么火，虽然<code>bbc</code>可能不如<code>cilium</code>应用得多。但是<code>bbc</code>推出得更早，而且可以对接<code>python</code>，应用的人也很多，安装方面不应该这么多坑才对。所以重新调整一下，放弃源码编译安装。把虚拟机重装成了centos8系统，准备直接安装rpm包。</p>
+<h3 id="centos8"><a href="#centos8" class="headerlink" title="centos8"></a>centos8</h3><p>在<a target="_blank" rel="noopener" href="https://pkgs.org/search/?q=bcc">网站</a>查看bcc相关rpm包，用dnf安装了3个包：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://centos.pkgs.org/8/centos-powertools-x86_64/bcc-devel-0.19.0-4.el8.x86_64.rpm.html">bcc-devel</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://centos.pkgs.org/8/centos-appstream-x86_64/bcc-0.19.0-4.el8.x86_64.rpm.html">bcc</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://centos.pkgs.org/8/centos-appstream-x86_64/bcc-tools-0.19.0-4.el8.x86_64.rpm.html">bcc-tools</a></p>
+<p>  dnf install bcc-tools<br>  dnf install bcc<br>  dnf –enablerepo=powertools install bcc-devel</p>
+<p>  git clone <a href="mailto:&#103;&#x69;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#117;&#98;&#46;&#x63;&#x6f;&#x6d;">&#103;&#x69;&#116;&#x40;&#x67;&#x69;&#116;&#104;&#117;&#98;&#46;&#x63;&#x6f;&#x6d;</a>:DavadDi/bpf_demo.git<br>  ./main –binary ../tracee/main -func main.ebpfDemo</p>
+</li>
+</ul>
+<p>成功了，并且测试了一个用ebpf修改函数参数的小demo。可以开始学习了。</p>
+<p>但是遗憾的是，在做http相关测试的时候报错了：</p>
+<pre><code>/root/go/pkg/mod/github.com/iovisor/gobpf@v0.0.0-20200614202714-e6b321d32103/bcc/module.go:261:33: not enough arguments in call to _C2func_bpf_attach_uprobe
+        have (_Ctype_int, uint32, *_Ctype_char, *_Ctype_char, _Ctype_ulong, _Ctype_int)
+        want (_Ctype_int, uint32, *_Ctype_char, *_Ctype_char, _Ctype_ulong, _Ctype_int, _Ctype_uint)
+</code></pre>
+<p>搜索到一个<a target="_blank" rel="noopener" href="https://github.com/containers/oci-seccomp-bpf-hook/issues/69">issue</a>怀疑是bcc-devel的版本低，有人编译bcc解决。</p>
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><h3 id="测试静态跟踪点（usdt）"><a href="#测试静态跟踪点（usdt）" class="headerlink" title="测试静态跟踪点（usdt）"></a>测试静态跟踪点（usdt）</h3><p>看了这个<a target="_blank" rel="noopener" href="https://ebpf.top/post/ebpf-overview-part-5/">文章</a></p>
+<p>期间安装了一些python设置跟踪点的依赖（centos8中进行）</p>
+<pre><code>dnf install elfutils-libelf-devel
+# dnf报错，编译安装解决
+git clone git@github.com:sthima/libstapsdt.git
+cd libstapsdt/
+make
+yum install yum -y install gcc automake autoconf libtool make
+yum -y install gcc automake autoconf libtool make
+make
+make install
+ldconfig
+
+pip3 install stapsdt
+</code></pre>
+<h3 id="动态探针（uprobes）"><a href="#动态探针（uprobes）" class="headerlink" title="动态探针（uprobes）"></a>动态探针（uprobes）</h3><p>静态跟踪点的问题在于，它们需要在源代码中明确定义，并且在修改跟踪点时需要重新构建应用程序。保证现有跟踪点的 ABI 稳定性对维护人员如何重新构建/重写跟踪点数据的代码施加了限制。</p>
+<p>bcc的example <a target="_blank" rel="noopener" href="https://github.com/iovisor/bcc/blob/master/tools/gethostlatency.py">gethostlatency.py</a> 示范了用监控所有dns的查询用时。有几个点可以关注下，后面自己写程序用得到：</p>
+<ul>
+<li>读取参数的c宏<code>PT_REGS_PARM1</code>。根据<a target="_blank" rel="noopener" href="https://mozillazg.com/2021/05/ebpf-gobpf-get-function-argument-values-from-pt_regs.html">帖子</a></li>
+<li>bpf_get_current_comm</li>
+<li><a target="_blank" rel="noopener" href="https://www.ebpf.top/post/ebpf_prog_pid_filter/">bpf_get_current_pid_tgid</a>。高 32 位置为 tgid ，低 32 位为 pid(tid)。</li>
+<li><code>BPF_HASH(start, u32, struct val_t);</code>声明一个start数据结构，entry写，return读并删。</li>
+<li>BPF_PERF_OUTPUT。<code>BPF_PERF_OUTPUT(events);</code>声明，<code>events.perf_submit</code>生成输出数据，PYTHON代码中<code>B[&quot;events&quot;].event(data)</code>接受数据。</li>
+</ul>
+<p>但是这个程序有个点不太理解，c中在<code>entry</code>中用线程tgid作为key记录时间、host等信息，<code>return</code>中用<code>tgid</code>在<code>BPF_HASH</code>中读取出来，如果一个go进程重复的进行curl，我理解可能会在一个线程（go PMG中的P）中进行，可能会是一个线程吧？那这个tgid怎么记录呢，会不会乱呢？</p>
+<h5 id="测试一"><a href="#测试一" class="headerlink" title="测试一"></a>测试一</h5><p>写了一个bash，进行几次curl请求。并将curl请求扔进后台进行处理。发现两次pid及tgid均不同，难道每次curl是启动一个新进程？</p>
+<h5 id="测试二"><a href="#测试二" class="headerlink" title="测试二"></a>测试二</h5><p>写了个go代码循环请求某域名，但是发现go进行http请求gethostlatency.py竟然无任何输出！  用gccgo编译也不行，目前尚不知道原因。。。</p>
+<h5 id="测试三：go函数lantency"><a href="#测试三：go函数lantency" class="headerlink" title="测试三：go函数lantency"></a>测试三：go函数lantency</h5><p>想测试bcc的funclantency，搞了半天搞不通。发现go的bcc包的<code>/usr/lib/python3.6/site-packages/bcc/__init__.py </code>好像有点问题，<code>path.encode()</code>是<code>byte</code>，不能直接和<code>string</code>相加。可能是python版本问题？不太清楚，反正python3.6这样改一下就好了：</p>
+<pre><code>- exe_file = os.path.join(path.encode(), bin_path)
++ #exe_file = os.path.join(path.encode(), bin_path)
++ exe_file = os.path.join(path, bin_path)
+</code></pre>
+<p>又yum安装了<code>gccc-go</code>，可以测试了。</p>
+<p>先用<code>gccgo</code>编译并运行</p>
+<pre><code># gccgo -o app t.go
+# ./app
+</code></pre>
+<p>在另一终端运行<code>funclatency</code>分析<code>fmt.Println</code>调用时长</p>
+<pre><code># ./funclatency &#39;go:fmt.Println&#39;
+
+Function = b&#39;fmt.Println&#39; [79990]
+     nsecs               : count     distribution
+         0 -&gt; 1          : 0        |                                        |
+         2 -&gt; 3          : 0        |                                        |
+         4 -&gt; 7          : 0        |                                        |
+         8 -&gt; 15         : 0        |                                        |
+        16 -&gt; 31         : 0        |                                        |
+        32 -&gt; 63         : 0        |                                        |
+        64 -&gt; 127        : 0        |                                        |
+       128 -&gt; 255        : 0        |                                        |
+       256 -&gt; 511        : 0        |                                        |
+       512 -&gt; 1023       : 0        |                                        |
+      1024 -&gt; 2047       : 0        |                                        |
+      2048 -&gt; 4095       : 0        |                                        |
+      4096 -&gt; 8191       : 0        |                                        |
+      8192 -&gt; 16383      : 3        |*******                                 |
+     16384 -&gt; 32767      : 12       |****************************            |
+     32768 -&gt; 65535      : 17       |****************************************|
+     65536 -&gt; 131071     : 2        |****                                    |
+</code></pre>
+<p>avg = 37622 nsecs, total: 1279163 nsecs, count: 34</p>
+<h5 id="测试四：获取函数调用及参数"><a href="#测试四：获取函数调用及参数" class="headerlink" title="测试四：获取函数调用及参数"></a>测试四：获取函数调用及参数</h5><pre><code># cd /root/go/src
+# cat add.go
+package main
+
+import &quot;fmt&quot;
+
+func add(x int, y int) int &#123;
+   return x + y
+&#125;
+func main() &#123;
+   fmt.Println(add(42, 13))
+&#125;
+# gccgo -o add add.go
+# ./add
+</code></pre>
+<p>在另一终端运行</p>
+<pre><code># trace &#39;/root/go/src/add:main.add&#39; &quot;%d %d&quot; arg1, arg2&#39;
+PID     TID     COMM            FUNC             -
+80046   80046   add             main.add         42 13
+</code></pre>
+<p>这里注意：这里是gccgo编译的。如果是go编译，因为Go gc编译器并不遵循标准的 AMD ABI 函数调用约定， 这导致这个调试器或者其它的调试器跟踪参数有问题(我以前也听过前同事抱怨过这个问题)。我猜Go需要使用一个不同的ABI来返回值， 因为它需要返回多个值。（抄的<a target="_blank" rel="noopener" href="https://www.brendangregg.com/blog/2017-01-31/golang-bcc-bpf-function-tracing.html">大神的博客</a>，详情请见原文）</p>
+<p>不知道大神改了啥，从go栈地址拿到了参数内容。我就跳过了，估计短期我还用不到这，惭愧。</p>
+<h5 id="测试五：监控程序产生的的http包"><a href="#测试五：监控程序产生的的http包" class="headerlink" title="测试五：监控程序产生的的http包"></a>测试五：监控程序产生的的http包</h5><p><code>iovisor/bcc</code>的<code>examples/networking/http_filter</code>已经写好了bcc过滤http请求及结果的demo。测试<code>http-parse-simple</code>，python代码判断了ethernet包头、ip包头、tcp包头的长度，然后打印了package payload第一行。</p>
+<p>例如</p>
+<pre><code>HTTP/1.1 200 OK
+GET /opc/v2/instance/ HTTP/1.1
+</code></pre>
+<p>这是两个包，第一个是request，第二个是response。因为已经读取出内容，所以我判断应该可以读取出<code>host</code>等其他内容。稍作修改并打印出来：</p>
+<pre><code>GET /e HTTP/1.1
+all package content：\x02\x00\x17\x00\xfc\x7f\x00\x00\x17 \x15\xd6\x08\x00E\x00\x02\n\x00\x00@\x001\x06f\x91=\x87\x98\xfd\n\x00\x00\xd9\xf8\xeb#\x82\x02L\x98m8L\xbe\x12\x80\x18\x08\x02\xf5\xe6\x00\x00\x01\x01\x08\n\x84F\x91E\x87\x04\xdb\xadGET /e HTTP/1.1\r\nHost: myor2:9090\r\nConnection: keep-alive\r\nCache-Control: max-age=0\r\nUpgrade-Insecure-Requests: 1\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\r\nAccept-Encoding: gzip, deflate\r\nAccept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n\r\n
+
+HTTP/1.1 200 OK
+all package content：\x00\x00\x17 \x15\xd6\x02\x00\x17\x00\xfc\x7f\x08\x00E\x00\x00\xb4XN@\x00@\x06\x00\x99\n\x00\x00\xd9=\x87\x98\xfd#\x82\xf3\xb0\xa6\xa1\xbbe\xe0\xb4\xa5\x9b\x80\x18\x03\x92\xe2\x03\x00\x00\x01\x01\x08\n\x86\xfc\xd5E\x84&gt;\x99WHTTP/1.1 200 OK\r\nDate: Wed, 22 Dec 2021 08:36:59 GMT\r\nContent-Length: 11\r\nContent-Type: text/plain; charset=utf-8\r\n\r\ne = 2.7183\n
+</code></pre>
+<p>可以看到，其实可以从request包中拿到<code>Host</code>以及<code>http header</code>。但是这里有个问题，如何将request和response对起来呢？从http-parse-complete可以看到，是用源、目的ip/port4元组将request和response联系起来的。不过我的环境里response运行不通过，ip和port的偏移量有问题。</p>
+<p>受<code>http-parse-complete.py</code>的启发，可以用4元组做记录request并在response到来的时候计算duration。这样可以用作http的监控了。不需要日志、监控，甚至不需要业务的配合，简直完美！不过遗憾的是我的环境下complete跑步起来，判断ip的偏移量有问题。</p>
+<p>另外吐槽下python。开始python代码执行报错，开始以为我环境或者版本问题，后来才发现是python2函数引起的问题。不知道python的bug程序员都怎么标注python版本？这个破问题我还查了半天。。。</p>
+<h3 id="bcc-tools"><a href="#bcc-tools" class="headerlink" title="bcc/tools"></a>bcc/tools</h3><p>bcc还提供了很多其他工具，比如java或python的分析。</p>
+<h3 id="iovisor-gobpf"><a href="#iovisor-gobpf" class="headerlink" title="iovisor/gobpf"></a>iovisor/gobpf</h3><p>这是个依赖bcc的go repo，可以将向bcc的python工具一样使用bcc功能。测试了非常简单的库<code>github.com/DavadDi/bpf_demo</code>，其中<code>bpf_go_tracer</code>监听go函数并且替换掉了其中的参数。</p>
+<p>但是当我测试<code>pixie-io/pixie-demos</code>遇到了问题。首先是因为版本问题build<code>simple-gotracing/http_trace_uprobe</code>不通过，后来我升级了<code>github.com/iovisor/gobpf</code>版本又报了另一个错误：</p>
+<pre><code>./utils.go:66:33: not enough arguments in call to _C2func_bpf_attach_uprobe
+        have (_Ctype_int, uint32, *_Ctype_char, *_Ctype_char, _Ctype_ulong, _Ctype_int)
+        want (_Ctype_int, uint32, *_Ctype_char, *_Ctype_char, _Ctype_ulong, _Ctype_int, _Ctype_uint)
+</code></pre>
+<p>utils.go有个<code>bpf_attach_uprobe</code>缺少了一个参数。看代码是因为bcc版本不对造成的，网上说用bcc 0.17没问题，不过我没有再测试了以后有时间再补上吧。</p>
+<h3 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h3><p>bcc有很多工具。初步测算了tcpaccept/tcptracer/profile等。可以初步看看有用的工具。</p>
+<p>遗留问题：</p>
+<ul>
+<li>需要查看为什么<code>gethostlatency</code>抓不到go的http请求</li>
+<li>怎么查看各种服务的http请求及处理结果</li>
+<li><code>pixie-io/pixie-demos</code>的<code>simple-gotracing</code></li>
+<li>go处理拿到<code>http</code>以及<code>funclantency</code></li>
+</ul>
+
+  <p><a class="classtest-link" href="/tags/ebpf/" rel="tag">ebpf</a> — Dec 3, 2021</p>
+  
+
+
+          <div class="row mt-2">
+  
+    <div class="eight columns">
+      <p id="madewith">Made with ❤ and
+        <a class="footer-link icon" href="https://hexo.io" target="_blank" style="text-decoration: none;" rel="noreferrer" aria-label="Hexo.io">
+        <svg class="hexo svg-hov" width="14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Hexo.js</title><path d="M12 .007L1.57 6.056V18.05L12 23.995l10.43-6.049V5.952L12 .007zm4.798 17.105l-.939.521-.939-.521V12.94H9.08v4.172l-.94.521-.938-.521V6.89l.939-.521.939.521v4.172h5.84V6.89l.94-.521.938.521v10.222z"/></svg>
+        </a>
+        
+        at <a href="https://en.wikipedia.org/wiki/Earth" target="_blank" rel="noreferrer">Earth</a>.</p>
+        
+    </div>
+
+    <!-- Sepcial thanks to https://simpleicons.org/ for the icons -->
+    <div class="four columns mb-3 posisi" >
+      
+      <a class="ml-0 footer-link icon" href="https://github.com/adisaktijrs" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="GitHub">
+        <svg class="github svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      
+
+      
+      <a class="ml-0 footer-link icon" href="https://linkedin.com/in/adisaktijrs" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="LinkedIn">
+        <svg class="linkedin svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </a>
+      
+
+      
+      <a class="ml-0 footer-link icon" href="https://twitter.com/adisaktijrs" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="Twitter">
+        <svg class="twitter svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Twitter</title><path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"/></svg>
+      </a>
+      
+
+      
+      <a class="ml-0 footer-link icon" href="https://instagram.com/adisaktijrs" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="Instagram">
+        <svg class="instagram svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Instagram</title><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+      </a>
+      
+
+      
+      <a class="ml-0 footer-link icon" href="https://stackoverflow.com/story/tobiasreithmeier" target="_blank" style="text-decoration: none" rel="noreferrer" aria-label="StackOverflow">
+        <svg class="stackoverflow svg-hov" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Stack Overflow</title><path d="M15.725 0l-1.72 1.277 6.39 8.588 1.716-1.277L15.725 0zm-3.94 3.418l-1.369 1.644 8.225 6.85 1.369-1.644-8.225-6.85zm-3.15 4.465l-.905 1.94 9.702 4.517.904-1.94-9.701-4.517zm-1.85 4.86l-.44 2.093 10.473 2.201.44-2.092-10.473-2.203zM1.89 15.47V24h19.19v-8.53h-2.133v6.397H4.021v-6.396H1.89zm4.265 2.133v2.13h10.66v-2.13H6.154Z"/></svg>
+      </a>
+      
+
+    </div>
+  
+</div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <script src="/js/nanobar.min.js"></script>
+  <script>
+    var options = {
+      classname: 'nanobar',
+      id: 'myNanobar'
+    };
+    var nanobar = new Nanobar(options);
+    nanobar.go(30);
+    nanobar.go(76);
+    nanobar.go(100);
+  </script>
+
+</body>
+
+</html>
