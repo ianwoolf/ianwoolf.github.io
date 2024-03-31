@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>Hexo</title>
+  <title>ianwoolf的随笔</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:title" content="ianwoolf的随笔">
+<meta property="og:url" content="http://ianwoolf.github.io/index.html">
+<meta property="og:site_name" content="ianwoolf的随笔">
 <meta property="og:locale" content="en_US">
-<meta property="article:author" content="John Doe">
+<meta property="article:author" content="ianwoolf">
 <meta name="twitter:card" content="summary">
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="ianwoolf的随笔" type="application/atom+xml">
   
   
     <link rel="shortcut icon" href="/favicon.png">
@@ -43,8 +43,12 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
+        <a href="/" id="logo">ianwoolf的随笔</a>
       </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">自留地，想到啥写啥</a>
+        </h2>
       
     </div>
     <div id="header-inner" class="inner">
@@ -64,7 +68,7 @@
         <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://ianwoolf.github.io"></form>
       </div>
     </div>
   </div>
@@ -106,7 +110,7 @@
 </ul>
 <p>早期发现，快速定位原因，及时⽌损或降级业务，并跟进故障中发现的问题，可以有效减少异常的持 续时间和影响。 </p>
 <h1 id="mttr"><a href="#mttr" class="headerlink" title="mttr"></a>mttr</h1><p>MTTR(MeanTime to Repair) 是衡量从检测到异常到修复所需时间的指标。它是衡量稳定施⼯质量的关 键指标之⼀。mttr主要包含了3个阶段：发现、定位、⽌损。 </p>
-<p><img src="/images/atuo_recovery_1/recovery_1.PNG" alt="image"></p>
+<p><img src="/images/atuo_recovery_1/recovery_1.png" alt="image"></p>
 <ul>
 <li>发现：这个时间通常被定义为异常开始到相关同学关注报警所花费时间。</li>
 </ul>
@@ -127,16 +131,16 @@
 <li><p>某个服务发⽣请求量异常：那么通过分析是否有某个agent、机房、源地址、uri的请求量较⾼且形 状相似，可以判断是哪类请求量导致请求量突增并辅助限流决策。</p>
 </li>
 </ul>
-<p><img src="/images/atuo_recovery_1/recovery_2.PNG" alt="image"></p>
+<p><img src="/images/atuo_recovery_1/recovery_2.png" alt="image"></p>
 <h2 id="分析决策树"><a href="#分析决策树" class="headerlink" title="分析决策树"></a>分析决策树</h2><p>我们分析并模仿了⼈类分析问题的逻辑，将各种问题的通⽤分析流程落地成多个决策树，并⽀持业务 ⾃定义分析决策树。通过分析异常的影响（影响⾯及影响程度）、以及可能的异常根因（下游依赖异 常、单实例、单集群、单机房、业务错误码异常等），通过提供更多信息帮助业务快速定位、快速⽌ 损。甚⾄⾃动执⾏降级、切流等任务以进⾏快速⽌损。</p>
-<p><img src="/images/atuo_recovery_1/recovery_3.PNG" alt="image"></p>
+<p><img src="/images/atuo_recovery_1/recovery_3.png" alt="image"></p>
 <p>还可以给决策树上的不同节点和分析出的根因增加权重，优化最后的根因排序。这个可以通过分析结 果的feedback⽤ai进⾏不断迭代权重。 </p>
 <h2 id="根因的属性及排序"><a href="#根因的属性及排序" class="headerlink" title="根因的属性及排序"></a>根因的属性及排序</h2><p>在警报触发分析或⼿动触发分析后，RCA将从各种数据源中提取的材料选择⼀棵或多棵决策树进⾏分 析。</p>
 <p>决策树的每个叶⼦节点都可以输出⼀个可能的原因，最后根据服务依赖程度、服务类型、权重等设置 的异常得分对原因进⾏排序。RCA将找出最可能的根本原因，并将这些原因及其材料发送到警报系统 和恢复系统。</p>
-<p><img src="/images/atuo_recovery_1/recovery_4.PNG" alt="image"></p>
+<p><img src="/images/atuo_recovery_1/recovery_4.png" alt="image"></p>
 <p>对于重要服务和报警，⽤⼾也可以指定某个根因及其属性，⾃动执⾏⽌损动作。⽐如服务的某个集 群，出现sla问题可以⾃动执⾏⽌损或切流动作。从⽽尽可能降低故障影响时间，减少故障的影响时⻓ 及资产损失。 </p>
 <h2 id="⽌损动作"><a href="#⽌损动作" class="headerlink" title="⽌损动作"></a>⽌损动作</h2><p>在业务的初始阶段，重新启动脚本可能⾜以从异常中恢复服务。随着业务变得越来越复杂，我们需要 ⼀个系统，使⽤配置或服务版本管理、流量管理、http或RPC发送器等原⼦操作来组装、管理和执⾏复 杂的任务。这些任务可能是我们的业务和服务能够尽快从异常中恢复的最后保证。当⼀些意外异常或 致命事件发⽣时，我们希望通过设置⼀些参数，尽快选择⼀个作业执⾏。</p>
-<p><img src="/images/atuo_recovery_1/recovery_5.PNG" alt="image"></p>
+<p><img src="/images/atuo_recovery_1/recovery_5.png" alt="image"></p>
 <p>原⼦操作可以包含流量在各机房的配⽐、配置管理、上线单回滚等。可以抽象成符合规范的操作或第 三⽅平台的任务，都可以抽象成原⼦操作。任意个原⼦操作可以编排成具有⼀定复杂度的任务，⽤于 ⽌损、降级、物理机扩容等操作层⾯的执⾏任务。笔者之前在某幸咖啡时从头实现了⼀套命令系统， 可以配置新建并管理k8s集群、新建es集群等任务（申请⼏台机器-&gt;机器初始化-&gt;按照jvm环境-&gt;下 载、安装、破解es-&gt;更改集群中每台es配置-&gt;启动es集群并验证）。 </p>
 <p>有了类似这种操作平台，我们就可以⾃⾏编排⽌损操作了。切流、降级、k8s集群扩容、更改配置、更 改流量平台配置等，只要你能想得到，剩下的就是开发原⼦操作和编排任务的事情了。 </p>
 <h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>在某跳动的某⾳业务，我们实现了⼀套根因分析到⾃动⽌损的平台。其实不⽌报警触发，⽇常的⽌损 流程验证及流量压测等功能也都⽤到了这套服务。根因分析和⾃愈这套，其实本质上就是在观察、分 析、决策的各个环节中将⼈类的经验进⾏提炼和落地。后⾯也可以再通过ai进⾏迭代。 </p>
@@ -145,7 +149,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2024/03/31/recovery-1/" data-id="clufftnxe00002wcq3n6j7kwh" data-title="根因分析与⾃愈 -- 概述" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://ianwoolf.github.io/2024/03/31/recovery-1/" data-id="clufftnxe00002wcq3n6j7kwh" data-title="根因分析与⾃愈 -- 概述" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -323,7 +327,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/31/ebpf-install-and-test/" data-id="clufetd630000etcq8yxuc6hk" data-title="ebpf之bcc的安装及测试" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://ianwoolf.github.io/2021/12/31/ebpf-install-and-test/" data-id="clufetd630000etcq8yxuc6hk" data-title="ebpf之bcc的安装及测试" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -376,7 +380,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/1970/01/01/hello-world/" data-id="clufetd6g0005etcq4hmj44ns" data-title="Hello World" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://ianwoolf.github.io/1970/01/01/hello-world/" data-id="clufetd6g0005etcq4hmj44ns" data-title="Hello World" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -464,7 +468,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       
-      &copy; 2024 John Doe<br>
+      &copy; 2024 ianwoolf<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
