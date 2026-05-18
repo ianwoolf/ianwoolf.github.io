@@ -1,19 +1,677 @@
 <!DOCTYPE html>
-<html lang="<%= config.language %>">
+<html lang="zh-CN">
 
 <!-- Head tag -->
-<%- partial('_partial/head') %>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  <meta name="baidu-site-verification" content="" />
+  <meta name="google-site-verification" content="" />
+  <meta name="msvalidate.01" content="" />
+  <meta name="360-site-verification" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- if page has tags, then add tags to keyword -->
+  
+  
+  <meta name="keywords" content=",ebpf,">
+  <!-- page.description has higher priority -->
+  <meta name="description" content="ianwoolf的技术博客">
+  <link rel="shortcut icon" href="//favicon.ico">
+  <title>
+    
+    ebpf之bcc的安装及测试 | ianwoolf&#39;s Blog
+    
+  </title>
+
+  <link rel="canonical" href="http://ianwoolf.github.io/2021/12/31/ebpf-install-and-test/">
+  
+<link rel="stylesheet" href="/css/geektutu.css">
+
+  <!-- global function -->
+  <script>
+    window.globalAddScript = function (url, onload, onerror) {
+      var s = document.createElement('script');
+      s.src = url;
+      onload && (s.onload = onload);
+      onerror && (s.onerror = onerror);
+      document.body.appendChild(s);
+    }
+    window.globalAddCss = function (url) {
+      var s = document.createElement('link');
+      s.rel = 'stylesheet';
+      s.href = url;
+      document.body.appendChild(s);
+    }
+    window.getPosition = function (ele) {
+      var x = 0, y = 0;
+      while (ele) {
+        x += (ele.offsetLeft - ele.scrollLeft + ele.clientLeft);
+        y += (ele.offsetTop - ele.scrollTop + ele.clientTop);
+        ele = ele.offsetParent;
+      }
+      return { x: x, y: y };
+    }
+    window.getDom = function (str) { return document.querySelector(str) }
+  </script>
+  <!-- google ad -->
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
 
 <body>
-    <%- partial('_partial/header',{cache: true}) %>
+    
+<header class="gkt-header col-xs-12 padding-0">
+    <div id="gkt-nav" class="gkt-header-container">
+        <a href="/" class="gkt-header-title float-left">
+            <img class="float-left" src="//favicon.ico" alt="">
+            <span>ianwoolf&#39;s Blog</span>
+        </a>
+        <nav class="gkt-header-nav text-right">
+            <ul>
+                <li><a class="hidden-xs" href="/feed.xml">订阅</a></li>
+                <li><a href="/series/">专题</a></li>
+                <li><a href="/archives/">归档</a></li>
+                <li><a href="/post/link.html">友链</a></li>
+                <li><a href="/post/about.html">关于</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div id="gkt-cate-nav" class="gkt-header-container hidden-xs">
+        
+        <nav class="gkt-header-nav float-left">
+            <ul>
+                
+                
+                <li class="gkt-cate-name float-left ">
+                    <a class="float-left" href="/1970/01/01/hello-world/">其他</a>
+                    
+                </li>
+                
+                <li class="gkt-cate-name float-left ">
+                    <a class="float-left" href="/1970/01/01/hello-world/">随笔</a>
+                    
+                </li>
+                
+                <li class="gkt-cate-name float-left active">
+                    <a class="float-left" href="/2021/12/31/ebpf-install-and-test/">技术 ▾</a>
+                    
+                    <ul class="gkt-sub-cate">
+                        
+                        <li class="gkt-sub-cate-name active"><a class="float-left"
+                                href="/2021/12/31/ebpf-install-and-test/">内核技术</a></li>
+                        
+                        <li class="gkt-sub-cate-name "><a class="float-left"
+                                href="/2024/03/31/recovery-1/">稳定性</a></li>
+                        
+                    </ul>
+                    
+                </li>
+                
+                <li class="gkt-cate-name float-left ">
+                    <a class="float-left" href="/2026/05/18/dollar-hegemony-twilight/">金融</a>
+                    
+                </li>
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+<div class="gkt-header-placeholder" style="height: 44px"></div>
+<div class="gkt-header-placeholder hidden-xs" style="height: 44px"></div>
+<script>
+    (function () {
+        window.addEventListener('scroll', function () {
+            if (window.innerWidth < 768) {
+                return;
+            }
+            var nav = document.querySelector('#gkt-nav');
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            scrollTop > 50 && (nav.classList.add('hide'));
+            scrollTop <= 50 && (nav.classList.remove('hide'));
+        });
+        var cateNavs = document.querySelectorAll('#gkt-cate-nav>nav>ul>li');
+        [].slice.call(cateNavs).forEach(function (item) {
+            var sub = item.querySelector('.gkt-sub-cate');
+            if (!sub) return;
+            item.addEventListener('mouseenter', function (e) { sub.style.display = 'block'; }, false);
+            item.addEventListener('mouseleave', function (e) { sub.style.display = 'none'; }, false);
+        })
+    })();
+</script>
     <!-- Main Content -->
     <div class="main-container">
-        <%- body %>
+        <!-- Main Content -->
+<main class="col-xs-12 padding-0 markdown-it">
+    <!-- Post Container -->
+    
+    
+    <!-- Post Content -->
+<div class="float-left post-container box-shadow">
+    <div class="u-arrow-wrapper hidden-xs">
+        
+        <a class="float-left" href="/1970/01/01/hello-world/"><i class="u-arrow-left"></i></a>
+        
+        
+        <a class="float-right" href="/2024/03/31/recovery-1/"><i class="u-arrow-right"></i></a>
+        
     </div>
-    <%- partial('_partial/go-top') %>
-    <%- partial('_widget/click-image.ejs') %>
+    <article class="col-xs-12">
+        <h1> ebpf之bcc的安装及测试 </h1>
+        
+        
+        <div class="hidden-lg hidden-md series_links">
+            <p> <strong> 内核技术系列文章链接：</strong></p>
+            <ul>
+                
+                <li>
+                    <a href="/2021/12/31/ebpf-install-and-test/">ebpf之bcc的安装及测试</a>
+                    <span class="post-item-date">(Dec 31, 2021)</span>
+                </li>
+                
+            </ul>
+        </div>
+        
+        
+        <div class="gkt-article-start"></div>
+        <p>bcc的安装貌似有些坑，开始我再ubuntu上按照<a target="_blank" rel="noopener" href="https://github.com/iovisor/bcc/blob/master/INSTALL.md#ubuntu---source">官方文档</a>安装后运行失败了，有点帖子说需要自己编译安装。但是我的vps每次编译bcc都挂，后来换成centos8用下载rpm包安装成功了。</p>
+<h2 id="ubuntu-20-04"><a href="#ubuntu-20-04" class="headerlink" title="ubuntu 20.04"></a>ubuntu 20.04</h2><p>尝试apt安装失败（<a target="_blank" rel="noopener" href="https://github.com/iovisor/gobpf/issues/214">issue</a>），源码编译安装，机器负载过高失败。最后参考帖子下周release的源码编译安装，机器仍然负载过高没有结果。</p>
+<p>这tm也太曲折了。可现在ebpf这么火，虽然bbc可能不如cilium应用得多。但是bbc推出得更早，而且可以对接python，应用的人也很多，安装方面不应该这么多坑才对。所以重新调整一下，放弃源码编译安装。把虚拟机重装成了centos8系统，准备直接安装rpm包。</p>
+<h2 id="centos8"><a href="#centos8" class="headerlink" title="centos8"></a>centos8</h2><p>在网站查看bcc相关rpm包，用dnf安装了3个包：</p>
+<ul>
+<li><p>bcc-devel</p>
+</li>
+<li><p>bcc</p>
+</li>
+<li><p>bcc-tools</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dnf install bcc-tools</span><br><span class="line">dnf install bcc</span><br><span class="line">dnf –enablerepo=powertools install bcc-devel</span><br><span class="line"></span><br><span class="line">git <span class="built_in">clone</span> git@github.com:DavadDi/bpf_demo.git</span><br><span class="line">./main –binary ../tracee/main -func main.ebpfDemo</span><br></pre></td></tr></table></figure>
+
+<p>成功了，并且测试了一个用ebpf修改函数参数的小demo。可以开始学习了。</p>
+<p>但是遗憾的是，在做http相关测试的时候报错了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/root/go/pkg/mod/github.com/iovisor/gobpf@v0.0.0-20200614202714-e6b321d32103/bcc/module.go:261:33: not enough arguments in call to _C2func_bpf_attach_uprobe</span><br><span class="line">        have (_Ctype_int, uint32, *_Ctype_char, *_Ctype_char, _Ctype_ulong, _Ctype_int)</span><br><span class="line">        want (_Ctype_int, uint32, *_Ctype_char, *_Ctype_char, _Ctype_ulong, _Ctype_int, _Ctype_uint)</span><br></pre></td></tr></table></figure>
+
+<p>搜索到一个<a target="_blank" rel="noopener" href="https://github.com/containers/oci-seccomp-bpf-hook/issues/69">issue</a>怀疑是bcc-devel的版本低，有人编译bcc解决。</p>
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><h2 id="测试静态跟踪点（usdt）"><a href="#测试静态跟踪点（usdt）" class="headerlink" title="测试静态跟踪点（usdt）"></a>测试静态跟踪点（usdt）</h2><p>看了这个<a target="_blank" rel="noopener" href="https://ebpf.top/post/ebpf-overview-part-5/">文章</a></p>
+<p>期间安装了一些python设置跟踪点的依赖（centos8中进行）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">dnf install elfutils-libelf-devel</span><br><span class="line"><span class="comment"># dnf报错，编译安装解决</span></span><br><span class="line">git <span class="built_in">clone</span> git@github.com:sthima/libstapsdt.git</span><br><span class="line"><span class="built_in">cd</span> libstapsdt/</span><br><span class="line">make</span><br><span class="line">yum install yum -y install gcc automake autoconf libtool make</span><br><span class="line">yum -y install gcc automake autoconf libtool make</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line">ldconfig</span><br><span class="line"></span><br><span class="line">pip3 install stapsdt</span><br></pre></td></tr></table></figure>
+
+<h2 id="动态探针（uprobes）"><a href="#动态探针（uprobes）" class="headerlink" title="动态探针（uprobes）"></a>动态探针（uprobes）</h2><p>静态跟踪点的问题在于，它们需要在源代码中明确定义，并且在修改跟踪点时需要重新构建应用程序。保证现有跟踪点的 ABI 稳定性对维护人员如何重新构建&#x2F;重写跟踪点数据的代码施加了限制。</p>
+<p>bcc的example<a target="_blank" rel="noopener" href="https://github.com/iovisor/bcc/blob/master/tools/gethostlatency.py">gethostlatency.py</a> 示范了用监控所有dns的查询用时。有几个点可以关注下，后面自己写程序用得到：</p>
+<ul>
+<li>读取参数的c宏PT_REGS_PARM1。根据<a target="_blank" rel="noopener" href="https://mozillazg.com/2021/05/ebpf-gobpf-get-function-argument-values-from-pt_regs.html">帖子</a></li>
+<li>bpf_get_current_comm</li>
+<li><a target="_blank" rel="noopener" href="https://www.ebpf.top/post/ebpf_prog_pid_filter/">bpf_get_current_pid_tgid</a>。高 32 位置为 tgid ，低 32 位为 pid(tid)。</li>
+<li>BPF_HASH(start, u32, struct val_t);声明一个start数据结构，entry写，return读并删。</li>
+<li>BPF_PERF_OUTPUT。BPF_PERF_OUTPUT(events);声明，events.perf_submit生成输出数据，PYTHON代码中B[“events”].event(data)接受数据。</li>
+</ul>
+<p>但是这个程序有个点不太理解，c中在entry中用线程tgid作为key记录时间、host等信息，return中用tgid在BPF_HASH中读取出来，如果一个go进程重复的进行curl，我理解可能会在一个线程（go PMG中的P）中进行，可能会是一个线程吧？那这个tgid怎么记录呢，会不会乱呢？</p>
+<h3 id="测试一"><a href="#测试一" class="headerlink" title="测试一"></a>测试一</h3><p>写了一个bash，进行几次curl请求。并将curl请求扔进后台进行处理。发现两次pid及tgid均不同，难道每次curl是启动一个新进程？</p>
+<h3 id="测试二"><a href="#测试二" class="headerlink" title="测试二"></a>测试二</h3><p>写了个go代码循环请求某域名，但是发现go进行http请求gethostlatency.py竟然无任何输出！ 用gccgo编译也不行，目前尚不知道原因。。。</p>
+<h3 id="测试三：go函数lantency"><a href="#测试三：go函数lantency" class="headerlink" title="测试三：go函数lantency"></a>测试三：go函数lantency</h3><p>想测试bcc的funclantency，搞了半天搞不通。发现go的bcc包的&#x2F;usr&#x2F;lib&#x2F;python3.6&#x2F;site-packages&#x2F;bcc&#x2F;__init__.py 好像有点问题，path.encode()是byte，不能直接和string相加。可能是python版本问题？不太清楚，反正python3.6这样改一下就好了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- exe_file = os.path.join(path.encode(), bin_path)</span><br><span class="line">+ <span class="comment">#exe_file = os.path.join(path.encode(), bin_path)</span></span><br><span class="line">+ exe_file = os.path.join(path, bin_path)</span><br></pre></td></tr></table></figure>
+
+<p>又yum安装了gccc-go，可以测试了。</p>
+<p>先用gccgo编译并运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gccgo -o app t.go</span></span><br><span class="line"><span class="comment"># ./app</span></span><br></pre></td></tr></table></figure>
+
+<p>在另一终端运行funclatency分析fmt.Println调用时长</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ./funclatency &#x27;go:fmt.Println&#x27;</span></span><br><span class="line"></span><br><span class="line">Function = b<span class="string">&#x27;fmt.Println&#x27;</span> [79990]</span><br><span class="line">nsecs               : count     distribution</span><br><span class="line">0 -&gt; 1          : 0        |                                        |</span><br><span class="line">2 -&gt; 3          : 0        |                                        |</span><br><span class="line">4 -&gt; 7          : 0        |                                        |</span><br><span class="line">8 -&gt; 15         : 0        |                                        |</span><br><span class="line">16 -&gt; 31         : 0        |                                        |</span><br><span class="line">32 -&gt; 63         : 0        |                                        |</span><br><span class="line">64 -&gt; 127        : 0        |                                        |</span><br><span class="line">128 -&gt; 255        : 0        |                                        |</span><br><span class="line">256 -&gt; 511        : 0        |                                        |</span><br><span class="line">512 -&gt; 1023       : 0        |                                        |</span><br><span class="line">1024 -&gt; 2047       : 0        |                                        |</span><br><span class="line">2048 -&gt; 4095       : 0        |                                        |</span><br><span class="line">4096 -&gt; 8191       : 0        |                                        |</span><br><span class="line">8192 -&gt; 16383      : 3        |*******                                 |</span><br><span class="line">16384 -&gt; 32767      : 12       |****************************            |</span><br><span class="line">32768 -&gt; 65535      : 17       |****************************************|</span><br><span class="line">65536 -&gt; 131071     : 2        |****                                    |</span><br><span class="line">avg = 37622 nsecs, total: 1279163 nsecs, count: 34</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试四：获取函数调用及参数"><a href="#测试四：获取函数调用及参数" class="headerlink" title="测试四：获取函数调用及参数"></a>测试四：获取函数调用及参数</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># cd /root/<span class="keyword">go</span>/src</span><br><span class="line"># cat add.<span class="keyword">go</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line">        <span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(x <span class="type">int</span>, y <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> x + y</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">        fmt.Println(add(<span class="number">42</span>, <span class="number">13</span>))</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gccgo -o add add.go</span></span><br><span class="line"><span class="comment"># ./add</span></span><br></pre></td></tr></table></figure>
+
+<p>在另一终端运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># trace &#x27;/root/go/src/add:main.add&#x27; &quot;%d %d&quot; arg1, arg2&#x27;</span></span><br><span class="line">PID     TID     COMM            FUNC             -</span><br><span class="line">80046   80046   add             main.add         42 13</span><br></pre></td></tr></table></figure>
+
+<p>这里注意：这里是gccgo编译的。如果是go编译，因为Go gc编译器并不遵循标准的 AMD ABI 函数调用约定， 这导致这个调试器或者其它的调试器跟踪参数有问题(我以前也听过前同事抱怨过这个问题)。我猜Go需要使用一个不同的ABI来返回值， 因为它需要返回多个值。（抄的<a target="_blank" rel="noopener" href="https://www.brendangregg.com/blog/2017-01-31/golang-bcc-bpf-function-tracing.html">大神的博客</a>，详情请见原文）</p>
+<p>不知道大神改了啥，从go栈地址拿到了参数内容。我就跳过了，估计短期我还用不到这，惭愧。</p>
+<h3 id="测试五：监控程序产生的的http包"><a href="#测试五：监控程序产生的的http包" class="headerlink" title="测试五：监控程序产生的的http包"></a>测试五：监控程序产生的的http包</h3><p>iovisor&#x2F;bcc的examples&#x2F;networking&#x2F;http_filter已经写好了bcc过滤http请求及结果的demo。测试http-parse-simple，python代码判断了ethernet包头、ip包头、tcp包头的长度，然后打印了package payload第一行。</p>
+<p>例如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">GET /opc/v2/instance/ HTTP/1.1</span><br></pre></td></tr></table></figure>
+
+<p>这是两个包，第一个是request，第二个是response。因为已经读取出内容，所以我判断应该可以读取出host等其他内容。稍作修改并打印出来：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GET /e HTTP/1.1</span><br><span class="line">all package content：\x02\x00\x17\x00\xfc\x7f\x00\x00\x17 \x15\xd6\x08\x00E\x00\x02\n\x00\x00@\x001\x06f\x91=\x87\x98\xfd\n\x00\x00\xd9\xf8\xeb#\x82\x02L\x98m8L\xbe\x12\x80\x18\x08\x02\xf5\xe6\x00\x00\x01\x01\x08\n\x84F\x91E\x87\x04\xdb\xadGET /e HTTP/1.1\r\nHost: myor2:9090\r\nConnection: keep-alive\r\nCache-Control: max-age=0\r\nUpgrade-Insecure-Requests: 1\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9\r\nAccept-Encoding: gzip, deflate\r\nAccept-Language: zh-CN,zh;q=0.9,en;q=0.8\r\n\r\n</span><br><span class="line"></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">all package content：\x00\x00\x17 \x15\xd6\x02\x00\x17\x00\xfc\x7f\x08\x00E\x00\x00\xb4XN@\x00@\x06\x00\x99\n\x00\x00\xd9=\x87\x98\xfd#\x82\xf3\xb0\xa6\xa1\xbbe\xe0\xb4\xa5\x9b\x80\x18\x03\x92\xe2\x03\x00\x00\x01\x01\x08\n\x86\xfc\xd5E\x84&gt;\x99WHTTP/1.1 200 OK\r\nDate: Wed, 22 Dec 2021 08:36:59 GMT\r\nContent-Length: 11\r\nContent-Type: text/plain; charset=utf-8\r\n\r\ne = 2.7183\n</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，其实可以从request包中拿到Host以及http header。但是这里有个问题，如何将request和response对起来呢？从http-parse-complete可以看到，是用源、目的ip&#x2F;port4元组将request和response联系起来的。不过我的环境里response运行不通过，ip和port的偏移量有问题。</p>
+<p>受http-parse-complete.py的启发，可以用4元组做记录request并在response到来的时候计算duration。这样可以用作http的监控了。不需要日志、监控，甚至不需要业务的配合，简直完美！不过遗憾的是我的环境下complete跑步起来，判断ip的偏移量有问题。</p>
+<p>另外吐槽下python。开始python代码执行报错，开始以为我环境或者版本问题，后来才发现是python2函数引起的问题。不知道python的bug程序员都怎么标注python版本？这个破问题我还查了半天。。。</p>
+<h2 id="bcc-tools"><a href="#bcc-tools" class="headerlink" title="bcc&#x2F;tools"></a>bcc&#x2F;tools</h2><p>bcc还提供了很多其他工具，比如java或python的分析。</p>
+<h2 id="iovisor-gobpf"><a href="#iovisor-gobpf" class="headerlink" title="iovisor&#x2F;gobpf"></a>iovisor&#x2F;gobpf</h2><p>这是个依赖bcc的go repo，可以将向bcc的python工具一样使用bcc功能。测试了非常简单的库github.com&#x2F;DavadDi&#x2F;bpf_demo，其中bpf_go_tracer监听go函数并且替换掉了其中的参数。</p>
+<p>但是当我测试pixie-io&#x2F;pixie-demos遇到了问题。首先是因为版本问题buildsimple-gotracing&#x2F;http_trace_uprobe不通过，后来我升级了github.com&#x2F;iovisor&#x2F;gobpf版本又报了另一个错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./utils.go:66:33: not enough arguments in call to _C2func_bpf_attach_uprobe</span><br><span class="line">        have (_Ctype_int, uint32, *_Ctype_char, *_Ctype_char, _Ctype_ulong, _Ctype_int)</span><br><span class="line">        want (_Ctype_int, uint32, *_Ctype_char, *_Ctype_char, _Ctype_ulong, _Ctype_int, _Ctype_uint)</span><br></pre></td></tr></table></figure>
+
+<p>utils.go有个bpf_attach_uprobe缺少了一个参数。看代码是因为bcc版本不对造成的，网上说用bcc 0.17没问题，不过我没有再测试了以后有时间再补上吧。</p>
+<h1 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h1><p>bcc有很多工具。初步测算了tcpaccept&#x2F;tcptracer&#x2F;profile等。可以初步看看有用的工具。</p>
+<p>遗留问题：</p>
+<p>-需要查看为什么gethostlatency抓不到go的http请求<br>-怎么查看各种服务的http请求及处理结果<br>-pixie-io&#x2F;pixie-demos的simple-gotracing<br>-go处理拿到http以及funclantency</p>
+
+        
+<script src="/js/qrious.min.js"></script>
+
+
+        <hr style="margin-top: 2rem;">
+        <div>
+            
+            <p>
+                <span>专题: </span>
+                
+                <a href="/series/#内核技术">
+                    <code key="内核技术" class="post-label">内核技术</code>
+                </a>
+                
+            </p>
+            
+            <p>
+                <span>本文发表于 2021-12-31，最后修改于 2026-05-19。</span>
+            </p>
+            <!-- 文章末尾的提示 start -->
+            
+            
+                
+            <!-- 文章末尾的提示 end -->
+        </div>
+        <hr />
+        <p name="pagination" style="font-size: 1.2em">
+    
+    <a class="float-left" href="/1970/01/01/hello-world/">上一篇 « Hello World</a>
+    
+    
+    <a class="float-right" href="/2024/03/31/recovery-1/">下一篇 » 根因分析与⾃治 -- 概述</a>
+    
+</p>
+    </article>
+    <!-- 赞赏 -->
+    <!--打赏-->
+
+    
+    <div class="col-xs-12">
+        <!-- 标签列表 -->
+        <!-- Featured Tags -->
+<style>
+    #featured-tag .post-tag-item {
+        font-size: 12px;
+        line-height: 30px;
+        display: inline-block;
+        height: 30px;
+        margin: 5px 0px;
+        padding: 0 7px;
+        color: #333;
+        border-radius: 15px;
+        background: #f6f6f6;
+    }
+
+    #featured-tag .post-tag-item:hover {
+        color: #337ab7;
+    }
+</style>
+<div id="featured-tag">
+    
+    <a class="post-tag-item" href="/tags/#ebpf" title="ebpf"
+        rel="1">#ebpf (1) </a>
+    
+    <a class="post-tag-item" href="/tags/#根因分析" title="根因分析"
+        rel="1">#根因分析 (1) </a>
+    
+    <a class="post-tag-item" href="/tags/#自愈" title="自愈"
+        rel="1">#自愈 (1) </a>
+    
+    <a class="post-tag-item" href="/tags/#金融" title="金融"
+        rel="2">#金融 (2) </a>
+    
+    <a class="post-tag-item" href="/tags/#美元" title="美元"
+        rel="2">#美元 (2) </a>
+    
+    <a class="post-tag-item" href="/tags/#去美元化" title="去美元化"
+        rel="1">#去美元化 (1) </a>
+    
+    <a class="post-tag-item" href="/tags/#实体经济" title="实体经济"
+        rel="1">#实体经济 (1) </a>
+    
+    <a class="post-tag-item" href="/tags/#宏观经济" title="宏观经济"
+        rel="1">#宏观经济 (1) </a>
+    
+</div>
+    </div>
+    <!-- 评论 -->
+    
+    <div class="col-xs-12">
+        
+    </div>
+    
+</div>
+<aside class="float-left gkt-sidebar hidden-xs hidden-sm">
+    <div style="clear: both"></div>
+    <div class="gkt-sidebar-wrapper">
+        <section class="box-shadow"><style>
+    .gkt-summary {
+        border: 1px solid #DDDDDD;
+        border-radius: 3px;
+        padding: 5px;
+        width: 100%;
+    }
+
+
+    .gkt-summary nav {
+        overflow: hidden;
+    }
+
+    .gkt-summary nav a {
+        display: inline-block;
+        text-align: center;
+        color: #333;
+        font-size: 12px;
+    }
+
+    .gkt-summary nav span {
+        display: block;
+    }
+
+    .gkt-summary nav .middle {
+        border-left: 1px solid #eaecef;
+        border-right: 1px solid #eaecef;
+    }
+
+    .gkt-summary .number {
+        font-weight: bold;
+    }
+
+    .gkt-summary .link-list {
+        margin-top: 5px;
+        margin-bottom: -5px;
+        padding-top: 7px;
+        border-top: 1px dashed #999;
+        display: flex;
+    }
+
+    .gkt-summary .link-list a {
+        flex: 1;
+    }
+
+    .gkt-summary .link-list img {
+        width: 25px;
+        height: 25px;
+    }
+</style>
+
+<div class="gkt-summary">
+    <nav>
+        <a href="/" class="col-xs-4">
+            <span class="number">5</span><span>文章</span>
+        </a>
+        <a href="/series" class="col-xs-4 middle">
+            <span class="number">5</span><span>专题</span>
+        </a>
+        <a href="/tags" class="col-xs-4">
+            <span class="number">8</span><span>标签</span>
+        </a>
+    </nav>
+
+    
+</div></section>
+        
+        
+        <section class="gkt-sidebar-content box-shadow">
+            <strong>内核技术</strong>
+            <ul>
+                
+                <li>
+                    <a href="/2021/12/31/ebpf-install-and-test/"
+                        class="gkt-sidebar-active">ebpf之bcc的安装及测试</a>
+                    
+                    <!-- Table of Contents -->
+<div id="sidebar-toc">
+  <!-- TOC  -->
+  
+  
+  <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#ubuntu-20-04"><span class="toc-nav-text">ubuntu 20.04</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#centos8"><span class="toc-nav-text">centos8</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="toc-nav-text">测试</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E6%B5%8B%E8%AF%95%E9%9D%99%E6%80%81%E8%B7%9F%E8%B8%AA%E7%82%B9%EF%BC%88usdt%EF%BC%89"><span class="toc-nav-text">测试静态跟踪点（usdt）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#%E5%8A%A8%E6%80%81%E6%8E%A2%E9%92%88%EF%BC%88uprobes%EF%BC%89"><span class="toc-nav-text">动态探针（uprobes）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#bcc-tools"><span class="toc-nav-text">bcc&#x2F;tools</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#iovisor-gobpf"><span class="toc-nav-text">iovisor&#x2F;gobpf</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#TODO"><span class="toc-nav-text">TODO</span></a>
+  
+</div>
+
+<script>
+  (function () {
+    var h2 = document.querySelectorAll('article h2');
+    var h3 = document.querySelectorAll('article h3');
+    var linkList = document.querySelectorAll('#sidebar-toc a');
+
+    function findLinkElement(name) {
+      for (var i = 0; i < linkList.length; i++) {
+        var items = linkList[i].href.split('#');
+        if (items && items[items.length - 1] === encodeURIComponent(name)) {
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    function activeLink(titleList) {
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      for (var i = titleList.length - 1; i >= 0; i--) {
+        if (scrollTop - titleList[i].offsetTop > 0) {
+          var index = findLinkElement(titleList[i].id);
+          index != -1 && linkList[index].classList.add('gkt-sidebar-active');
+          break;
+        }
+      }
+    }
+
+    window.addEventListener("scroll", function (e) {
+      [].slice.call(linkList).forEach(function (link) {
+        link.classList.remove('gkt-sidebar-active');
+      })
+      activeLink(h2);
+    })
+  })();
+</script>
+                    
+                </li>
+                
+            </ul>
+        </section>
+        
+        
+        <section class="gkt-sidebar-content box-shadow">
+            <strong>最近的文章</strong>
+            <ul>
+                
+                <li>
+                    <a href="/2026/05/18/modern-finance-ultimate-scam/">现代金融的终极骗局：从&#34;债务造钱&#34;到&#34;美元吸金大法&#34;</a>
+                </li>
+                
+                <li>
+                    <a href="/2026/05/18/dollar-hegemony-twilight/">庄家的黄昏：美元霸权闭环的解构、反击与终极风险</a>
+                </li>
+                
+                <li>
+                    <a href="/2024/03/31/recovery-1/">根因分析与⾃治 -- 概述</a>
+                </li>
+                
+            </ul>
+        </section>
+        
+    </div>
+</aside>
+
+<script>
+    (function () {
+        function resizeUArrow() {
+            var s = getDom('.u-arrow-wrapper').style
+            var pc = getDom('.post-container')
+            s.left = getPosition(pc).x + 'px';
+            s.width = pc.clientWidth + 'px';
+        }
+        resizeUArrow()
+        window.addEventListener('resize', resizeUArrow);
+    })();
+</script>
+
+    
+
+<script>
+    (function () {
+        var ele = getDom('.gkt-sidebar-content')
+        if(!ele) return;
+        var wrapper = getDom('.gkt-sidebar-wrapper')
+        var last = 0
+        ele.style.maxHeight = ((window.innerHeight || 798) - 200) + 'px'
+        var f = function (e) {
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            var isDown = scrollTop > last;
+            var pos = getPosition(ele).y - scrollTop;
+            var downLimit = 50;
+            var upLimit = -100;
+            // uarrow.style.marginTop = scrollTop + 'px';
+            isDown && pos <= downLimit && wrapper.classList.add("gkt-sidebar-fixed");
+            !isDown && pos > upLimit && wrapper.classList.remove("gkt-sidebar-fixed");
+            last = scrollTop
+        }
+        f()
+        window.addEventListener("scroll", f)
+    })();
+</script>
+
+</main>
+    </div>
+    <style>
+    img#go-top {
+        position: fixed;
+        bottom: 100px;
+        width: 50px;
+        cursor: pointer;
+        z-index: 9999;
+    }
+</style>
+<img id="go-top" src="/icon/top.png" class="hidden-xs" style="display: none" />
+<script>
+    (function () {
+        var goTop = document.getElementById('go-top');
+        var mainContainer = document.querySelector('.main-container');
+        
+        goTop.addEventListener('click', function () {
+            window.scroll(0, 0);
+        }, false);
+        window.addEventListener('scroll', function () {
+            var right = document.body.offsetWidth - mainContainer.getBoundingClientRect().right;
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            goTop.style.right = right + 10 + 'px'
+            scrollTop > 700 && (goTop.style.display = "block");
+            scrollTop <= 700 && (goTop.style.display = "none");
+        });
+    })();
+</script>
+    <style>
+    #geektutu-click-img-container {
+        position: fixed;
+        left: 0;
+        top: 0;
+        text-align: center;
+        width: 100%;
+        display: none;
+        z-index: 9999;
+    }
+
+    #geektutu-click-img-container img {
+        object-fit: contain;
+        background: #eaecef;
+        padding: 15px;
+        border-radius: 10px;
+        height: auto;
+        width: auto;
+        vertical-align: middle;
+    }
+</style>
+
+
+<div id="geektutu-click-img-container">
+    <img src="" alt="Big Image">
+</div>
+
+<script>
+    (function () {
+        var container = document.querySelector('#geektutu-click-img-container')
+        var targetImg = container.querySelector('img')
+        var imgs = document.querySelectorAll('article img');
+        targetImg.addEventListener('click', function (e) {
+            container.style.display = 'none';
+            e && e.stopPropagation && e.stopPropagation();
+        }, false);
+
+        for (var i = 0; i < imgs.length; ++i) {
+            var img = imgs[i];
+            img.addEventListener('click', (function (src, rate) {
+                return function (e) {
+                    e && e.stopPropagation && e.stopPropagation();
+                    if (window.innerWidth < 980) {
+                        return
+                    }
+                    targetImg.style.height = targetImg.style.width = 'auto';
+                    if (window.innerWidth / window.innerHeight > rate) {
+                        targetImg.style.height = (window.innerHeight - 20) + 'px';
+                    } else {
+                        targetImg.style.width = (window.innerWidth - 20) + 'px';
+                    }
+                    container.style.height = window.innerHeight + 'px'
+                    container.style.lineHeight = window.innerHeight + 'px'
+                    container.style.display = 'block';
+                    targetImg.src = src;
+                };
+            }(img.src, img.width / img.height)), false)
+        }
+    })();
+</script>
     <!-- Footer -->
-    <%- partial('_partial/footer') %>
+    <!-- Footer -->
+<style>
+    footer {
+        width: 100%;
+        line-height: 1.5;
+        padding: 20px;
+    }
+
+    footer a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    .footer-hexo img {
+        height: 20px;
+        margin-bottom: -5px;
+    }
+
+    .footer-hexo a {
+        color: #337ab7;
+    }
+</style>
+<footer class="text-center col-xs-12">
+    <p>
+        <small>© 2026 - ianwoolf - </small>
+        <small>
+            <a target="_blank" rel="nofollow noopener" href="http://beian.miit.gov.cn/"></a>
+        </small>
+    </p>
+    <p class="footer-hexo">
+        <!-- 但若直接使用或修改主题，请务必保留这段声明 -->
+        <small>Powered by <a target="_blank" href="https://hexo.io">Hexo</a> | Theme
+            <a target="_blank" href="https://geektutu.com">Geektutu</a>
+            <a target="_blank" rel="noopener" href="https://github.com/geektutu/hexo-theme-geektutu">
+                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAYGBgYHBgcICAcKCwoLCg8ODAwODxYQERAREBYiFRkVFRkVIh4kHhweJB42KiYmKjY+NDI0PkxERExfWl98fKcBBgYGBgcGBwgIBwoLCgsKDw4MDA4PFhAREBEQFiIVGRUVGRUiHiQeHB4kHjYqJiYqNj40MjQ+TERETF9aX3x8p//CABEIACIAUAMBIgACEQEDEQH/xAAcAAABBAMBAAAAAAAAAAAAAAAAAQQFBwIDBgj/2gAIAQEAAAAA9KrHSgAYL5/z6zZGuJd12uugbhq3uKtmuRtix20IS7lTLAfAAAn/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oACAECEAAAAAAB/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAxAAAAAAAf/EADEQAAICAQIEBQEGBwAAAAAAAAECAwQFAAYREhORBxQhUlQxQVFic5KxJDJCYYGC0f/aAAgBAQABPwCFHnjWUzuvN6hV4cANSRLGjO9yRVUcSzMoA7jVXJYe5N0a2dhmk9kc0bN2GvLN8mbuNeWb5M3ca8s3yZu415Y/Jm7jXlm+TN3H/NeVPyZu40vOk3TZywK8wJ+v3EHVM/wsI/Dq2lrxN3Nnca16eti8chSAIoMbzByhMwP14kHVfwIiSaF5c96J6kwwCOTnHsYk8uvCrdmQy1TI4rJuz3cZLyGR/wCd4+YoOf8AEpUjXitubLYPG4paFsUxcuiGe7yc5gTW3LW44szXmobsi3Dhmic2+Z4+vCVH9CpraPiQ+QvbgTJrPFBWd5YpWrmNIIEXiRO32Pqt4p7cnfHk18lFBdmEVW1LVdIZGOrniTt6plrWKaO69yCykDRxwF+LMAewB0Txtr+Sf31VI8tEPw62fZt7N3Humtbpzz13ucX6CGSWMSuzpLyD1eNgeUka3PuvHbaxq3biTMHfkiSNCS78CwU+3Xg7Vu3MhuTcU6cq3Zemn3Eh2dv8Lzcut+29x1atKbHYqLJUhLwyNMwiZ3j9yDWOxUOV3tgb+3No5LDx1pi9+aeIwRlNY6bc+Jv+IFGrhLxtXJZ7VKcw81diiAAEn0JOrkWZyNfbEr0tz27UGQgkuGzXdIIvyowq99bRxk9ffO/L81SZBPZgEEroQroIxxMZOgeNsfkn99QypHGqO4Vl9CDrN4LDZkwyzyyQ2IgRHZrzGCZVP1XnQglT9oOtw4LC7iqV6uRkZoYpxKFSQpzFRw4EjVRMfSrQ1qqwxQxKFjjTgFUD7BoWYR6iVe+mtxt9Zwf9teaj4AdccPu5tedX5A/VrzUR+sy/q1CwksF19VEfDj/cnQRW+qg66cfsXtrpx+xe2unH7F7a6cfsXtrpx+xe2unH7F7a6cfsXtoxx+xe2gAAOA1//8QAFBEBAAAAAAAAAAAAAAAAAAAAMP/aAAgBAgEBPwB//8QAFBEBAAAAAAAAAAAAAAAAAAAAMP/aAAgBAwEBPwB//9k="
+                    alt="Github Star">
+            </a>
+        </small>
+    </p>
+    
+    
+
+</footer>
+
+
+<!-- Baidu Tongji -->
+
+
+
+
 
     <script>
         // 非本站网址，新开tab页签
@@ -33,7 +691,7 @@
             article && article.addEventListener('click', stopBubble, false)
         })();
     </script>
-    <%- partial('_widget/click-egg.ejs') %>
+    
 </body>
 
 </html>
