@@ -1,0 +1,98 @@
+<% if (page.book) { %>
+<style>
+    body {
+        background: white;
+    }
+    .gkt-header-placeholder, .gkt-header {
+        display: none;
+    }
+    .main-container {
+        width: 100%;
+        padding-top: 0;
+        max-width: 100%;
+    }
+</style>
+<% } %>
+<header class="gkt-header col-xs-12 padding-0">
+    <div id="gkt-nav" class="gkt-header-container">
+        <a href="<%= config.root %>" class="gkt-header-title float-left">
+            <img class="float-left" src="<%= config.root %><%= config.header_icon %>" alt="">
+            <span><%= config.title %></span>
+        </a>
+        <nav class="gkt-header-nav text-right">
+            <ul>
+                <li><a class="hidden-xs" href="<%= config.root %>feed.xml"><%= __('subscribe') %></a></li>
+                <li><a href="<%= config.root %>series/"><%= __('categories') %></a></li>
+                <li><a href="<%= config.root %>archives/"><%= __('archives') %></a></li>
+                <li><a href="<%= config.root %>post/link.html"><%= __('friend_link') %></a></li>
+                <li><a href="<%= config.root %>post/about.html"><%= __('about') %></a></li>
+            </ul>
+        </nav>
+    </div>
+    <div id="gkt-cate-nav" class="gkt-header-container hidden-xs">
+        <% var post_category = page.categories && page.categories.map(item => item.name) %>
+        <nav class="gkt-header-nav float-left">
+            <ul>
+                <% var categories = site.categories.map(c => c).sort((o1, o2) => {
+                    var d1 = o1.posts.sort('date').map(p => p)[0].date
+                    var d2 = o2.posts.sort('date').map(p => p)[0].date
+                    return d1 - d2;
+                  });
+
+                  var navMap = {};
+                  var navList = [];
+                  categories.forEach(function(category, index){
+                    let name = category.name;
+                    let active = (post_category + '') === name;
+                    let posts = category.posts.sort('date').map(post => post);
+                    let nav = posts[0].nav || name;
+                    let path = posts[0].path;
+                    !navMap[nav] && navList.push(nav)
+                    navMap[nav] && navMap[nav].push({active, name , path})
+                    !navMap[nav] && (navMap[nav] = [{active, name, path}])
+                  })
+                %>
+                <% navList.map(name => {
+                    let cates = navMap[name];
+                    let cate = cates[0];
+                    cates.length > 1 && (name += ' ▾')
+                    let active = cates.find(item => item.active)
+                %>
+                <li class="gkt-cate-name float-left <%= active ? 'active' : ''%>">
+                    <a class="float-left" href="<%= config.root %><%= cate.path %>"><%= name %></a>
+                    <% if(cates.length > 1) { %>
+                    <ul class="gkt-sub-cate">
+                        <% cates.map(item => { %>
+                        <li class="gkt-sub-cate-name <%= item.active ? 'active': ''%>"><a class="float-left"
+                                href="<%= config.root %><%= item.path %>"><%= item.name %></a></li>
+                        <% })%>
+                    </ul>
+                    <% }; %>
+                </li>
+                <% }); %>
+            </ul>
+        </nav>
+    </div>
+</header>
+<div class="gkt-header-placeholder" style="height: 44px"></div>
+<div class="gkt-header-placeholder hidden-xs" style="height: 44px"></div>
+<script>
+    (function () {
+        window.addEventListener('scroll', function () {
+            if (window.innerWidth < 768) {
+                return;
+            }
+            var nav = document.querySelector('#gkt-nav');
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            scrollTop > 50 && (nav.classList.add('hide'));
+            scrollTop <= 50 && (nav.classList.remove('hide'));
+        });
+        var cateNavs = document.querySelectorAll('#gkt-cate-nav>nav>ul>li');
+        [].slice.call(cateNavs).forEach(function (item) {
+            var sub = item.querySelector('.gkt-sub-cate');
+            if (!sub) return;
+            item.addEventListener('mouseenter', function (e) { sub.style.display = 'block'; }, false);
+            item.addEventListener('mouseleave', function (e) { sub.style.display = 'none'; }, false);
+        })
+    })();
+</script>

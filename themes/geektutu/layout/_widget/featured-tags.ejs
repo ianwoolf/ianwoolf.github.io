@@ -1,0 +1,24 @@
+<!-- Featured Tags -->
+<style>
+    #featured-tag .post-tag-item {
+        font-size: 12px;
+        line-height: 30px;
+        display: inline-block;
+        height: 30px;
+        margin: 5px 0px;
+        padding: 0 7px;
+        color: #333;
+        border-radius: 15px;
+        background: #f6f6f6;
+    }
+
+    #featured-tag .post-tag-item:hover {
+        color: #337ab7;
+    }
+</style>
+<div id="featured-tag">
+    <% site.tags.map(function(tag){  %>
+    <a class="post-tag-item" href="<%= config.root %>tags/#<%= tag.name %>" title="<%= tag.name %>"
+        rel="<%= tag.length %>">#<%= tag.name %> (<%= tag.length %>) </a>
+    <% }) %>
+</div>

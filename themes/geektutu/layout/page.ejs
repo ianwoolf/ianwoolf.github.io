@@ -1,0 +1,62 @@
+---
+layout: layout
+---
+<!-- Main Content -->
+<main class="col-xs-12 padding-0 markdown-it">
+    <!-- Post Container -->
+    <% if (!is_post()) { %>
+    <style>
+        @media (min-width: 1200px) {
+            .main-container {
+                width: 1000px !important;
+            }
+        }
+    </style>
+    <div class="float-left post-container box-shadow">
+        <%- typeof body !== 'undefined' ? body : page.content %>
+    </div>
+    <aside class="float-left gkt-sidebar hidden-xs hidden-sm">
+        <div style="clear: both"></div>
+        <div class="gkt-sidebar-wrapper">
+            <section class="bg-white box-shadow"><%- partial('_widget/summary') %></section>
+            <section class="gkt-sidebar-content bg-white box-shadow"><%- partial('_widget/featured-tags') %></section>
+            <% if((config.index_rec || []).length > 0) { %>
+            <section class="bg-white box-shadow">
+                <% config.index_rec.map(function(item){  %><p><a href="<%= item.link %>" title="<%= item.name %>"><%= item.name %></a></p><% }) %>
+            </section>
+            <% } %>
+            <% if((config.custom_ads || []).length > 0) { %>
+            <section class="bg-white box-shadow text-center">
+                <%- partial('_widget/custom-ad', {type: 'custom', count: 0}) %>
+            </section>
+            <% } %>
+        </div>
+    </aside>
+    <% } else { %>
+    <%- body %>
+    <% } %>
+<% if (!page.book) { %>
+<script>
+    (function () {
+        var ele = getDom('.gkt-sidebar-content')
+        if(!ele) return;
+        var wrapper = getDom('.gkt-sidebar-wrapper')
+        var last = 0
+        ele.style.maxHeight = ((window.innerHeight || 798) - 200) + 'px'
+        var f = function (e) {
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            var isDown = scrollTop > last;
+            var pos = getPosition(ele).y - scrollTop;
+            var downLimit = 50;
+            var upLimit = -100;
+            // uarrow.style.marginTop = scrollTop + 'px';
+            isDown && pos <= downLimit && wrapper.classList.add("gkt-sidebar-fixed");
+            !isDown && pos > upLimit && wrapper.classList.remove("gkt-sidebar-fixed");
+            last = scrollTop
+        }
+        f()
+        window.addEventListener("scroll", f)
+    })();
+</script>
+<% } %>
+</main>

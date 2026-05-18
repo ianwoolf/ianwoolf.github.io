@@ -1,0 +1,72 @@
+<style>
+    .gkt-summary {
+        border: 1px solid #DDDDDD;
+        border-radius: 3px;
+        padding: 5px;
+        width: 100%;
+    }
+
+
+    .gkt-summary nav {
+        overflow: hidden;
+    }
+
+    .gkt-summary nav a {
+        display: inline-block;
+        text-align: center;
+        color: #333;
+        font-size: 12px;
+    }
+
+    .gkt-summary nav span {
+        display: block;
+    }
+
+    .gkt-summary nav .middle {
+        border-left: 1px solid #eaecef;
+        border-right: 1px solid #eaecef;
+    }
+
+    .gkt-summary .number {
+        font-weight: bold;
+    }
+
+    .gkt-summary .link-list {
+        margin-top: 5px;
+        margin-bottom: -5px;
+        padding-top: 7px;
+        border-top: 1px dashed #999;
+        display: flex;
+    }
+
+    .gkt-summary .link-list a {
+        flex: 1;
+    }
+
+    .gkt-summary .link-list img {
+        width: 25px;
+        height: 25px;
+    }
+</style>
+
+<div class="gkt-summary">
+    <nav>
+        <a href="<%= config.root %>" class="col-xs-4">
+            <span class="number"><%= site.posts.length %></span><span><%= __('post') %></span>
+        </a>
+        <a href="<%= config.root %>series" class="col-xs-4 middle">
+            <span class="number"><%= site.categories.length %></span><span><%= __('categories') %></span>
+        </a>
+        <a href="<%= config.root %>tags" class="col-xs-4">
+            <span class="number"><%= site.tags.length %></span><span><%= __('tags') %></span>
+        </a>
+    </nav>
+
+    <% if(config.related_links) { %>
+    <div class="link-list">
+        <% config.related_links.forEach(function(item){ %>
+        <a href="<%= item.link %>"><img src="<%= config.root %><%= item.img %>" /></a>
+        <% }) %>
+    </div>
+    <% } %>
+</div>

@@ -1,0 +1,248 @@
+<!-- Post Content -->
+<style>
+  .markdown-it article h1, .markdown-it article h2, .markdown-it article h3 {
+    padding-top: 5px;
+    margin-top: 0px;
+  }
+  .post-container {
+    padding: 0 !important;
+    width: 100%;
+  }
+  .post-container article {
+    padding: 0 15px !important;
+  }
+  .gkt-book {
+    max-width: 80rem;
+    margin: 1rem auto;
+    display: flex;
+  }
+  .gkt-book-title {
+    color: #343a40;
+    font-size: 1.2em;
+  }
+  .gkt-sidebar-wrapper {
+    position: fixed;
+    margin-top: 15px;
+  }
+  .gkt-book-menu {
+    flex: 0 0 16rem;
+    padding-left: 15px;
+    padding-top: 5px;
+    z-index: 999;
+  }
+  .gkt-book-menu a {
+    color: #343a40;
+  }
+  .gkt-book-menu a.active {
+    color: #337ab7;
+  }
+  .gkt-book-menu > nav {
+    position: fixed;
+    overflow: auto;
+    padding-right: 15px;
+    height: 95%;
+    font-size: 0.85em;
+    line-height: 2;
+    -ms-overflow-style: none;
+    overflow: -moz-scrollbars-none;
+  }
+  .gkt-book-menu > nav::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-left: 1px solid #eee;
+  }
+  .gkt-book-menu > nav::-webkit-scrollbar-thumb {
+      background-color: #c1c1c1;
+  }
+  .gkt-book-menu > nav::-webkit-scrollbar {
+    width: 5px !important;
+  }
+  .gkt-book-menu hr {
+    padding: 2px;
+  }
+  .gkt-book-menu > nav > ul {
+    padding-left: 0;
+  }
+  .gkt-book-menu > nav ul,
+  .gkt-book-toc ul,
+  .gkt-book-toc ol {
+    list-style: none !important;
+  }
+  @media (min-width: 992px) {
+    .gkt-book-page {
+      width: calc(100% - 32rem);
+    }
+  }
+  .gkt-book-page {
+    min-width: 20rem;
+    transition: .2s ease-in-out;
+    transition-property: opacity;
+  }
+  .gkt-page-tips {
+    color: #555;
+    margin-top: -10px;
+  }
+  .gkt-book-toc {
+    flex: 0 0 16rem;
+    font-size: 0.85em;
+  }
+  .gkt-book .series_links {
+    border: 1px solid #eaecef;
+    padding: 0 15px;
+    background-color: #fff8dc;
+    margin-bottom: 20px;
+    border-radius: 5px;
+  }
+  .gkt-book-menu-icon {
+    padding: 0 15px;
+    font-size: 16px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  @media (max-width: 767px) {
+    .gkt-book-menu-hidden {
+      margin-left: -16rem;
+    }
+  }
+  .gkt-book-menu-checked {
+    opacity: 0.4;
+    margin-right: -16rem;
+    transition: .2s ease-in-out;
+    transition-property: opacity;
+  }
+</style>
+<div class="gkt-book post-container">
+  <aside class="gkt-book-menu gkt-book-menu-hidden">
+    <nav>
+      <% var first = site.posts.sort('date').map(p => p).find(p => p.book === page.book) %>
+      <h3 class="text-center">
+        <a class="gkt-book-title" href="<%- config.root %><%- first.path %>"><%- page.book %></a>
+      </h3>
+      <% if(config.related_links) { %>
+      <ul class="col-xs-12 text-center">
+        <li><a href="<%= config.root %>"><%= config.title %></a></li>
+        <% config.related_links.forEach(function(item){ %>
+        <li><a href="<%= item.link %>"><%= item.name %></a></li>
+        <% }) %>
+      </ul>
+      <% } %>
+      <hr />
+      <% var categories = site.categories.filter(function(category, index){ 
+           return category.posts.sort('date').filter((p, index) => p.book && p.book === page.book).length > 0
+         })
+        var categories = site.posts.sort('date').map(p => p).filter(p => p.book === page.book).map(p => p.categories.map(c => c)[0])
+        visited = {}
+        categories = categories.filter(c => {
+          if (visited[c.name]){
+            return false
+          }
+          visited[c.name] = true
+          return true
+        })
+      %>
+      <ul>
+        <% categories.forEach(function(category, index){ %>
+        <li>
+          <a><%= category.name %></a>
+          <ul>
+            <% category.posts.sort('date').map(function(p, index){ %>
+            <li><a href="<%= config.root %><%- p.path %>" class="<%- p.path === page.path ? 'active' : '' %> "><%- p.book_title || p.title.split(' - ')[p.title.split(' - ').length-1] %></a></li>
+            <% }) %>
+          </ul>
+        </li>
+        <% }) %>
+      </ul>
+    </nav>
+  </aside>
+  <div class="gkt-book-page">
+    <div class="hidden-sm hidden-md hidden-lg gkt-book-menu-icon">
+      <label for="book-menu">
+        <svg class="float-left" name="book-menu" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+      </label>
+      <strong class="float-right"><%- page.book %></strong>
+    </div>
+    <div class="u-arrow-wrapper hidden-xs">
+        <% if (page.next){ %>
+        <a class="float-left" href="<%= config.root %><%- page.next.path %>"><i class="u-arrow-left"></i></a>
+        <% } %>
+        <% if (page.prev){ %>
+        <a class="float-right" href="<%= config.root %><%- page.prev.path %>"><i class="u-arrow-right"></i></a>
+        <% } %>
+    </div>
+    <article class="col-xs-12">
+      <h1><%- page.title %></h1>
+      <% var categories = (page.categories || []).map(item => item)%> <% if
+      (categories.length){ var category = categories[0] %>
+      <div class="hidden-lg hidden-md hidden-sm series_links">
+        <p><strong> <%= category.name %>系列文章链接：</strong></p>
+        <ul>
+          <% category.posts.sort('date').map(function(post, index){ %>
+          <li>
+            <a href="<%= config.root %><%- post.path %>"><%- post.title %></a>
+            <span class="post-item-date">(<%= post.date.format('ll') %>)</span>
+          </li>
+          <% }) %>
+        </ul>
+      </div>
+      <% } %> <% if(page.github) { %>
+      <blockquote>
+        <p>
+          源代码/数据集已上传到
+          <a href="<%= page.github %>" target="_blank" rel="noopener">Github - <%= page.github.split('/')[4] %></a>
+        </p>
+      </blockquote>
+      <% } %>
+      <div class="gkt-article-start"></div>
+      <%- page.content %>
+      <%-partial('_widget/generate-qrcode') %>
+      <hr />
+      <p>
+        <% if(page.github_page) { %><a href="<%- page.github_page %>"><span class="float-left gkt-page-tips">edit this page</span></a><% } %>
+        <span class="float-right gkt-page-tips">last updated at <%- page.updated.format('YYYY-MM-DD') %></span>
+      </p>
+    </article>
+    <!-- 赞赏 -->
+    <%- partial('_widget/reward') %>
+    <%- partial('_widget/social') %>
+    <!-- 评论 -->
+    <% if (page.comment !== false) { %>
+    <div class="col-xs-12">
+      <%- partial('_widget/comments') %>
+    </div>
+    <% } %>
+  </div>
+  <aside class="gkt-book-toc hidden-xs hidden-sm">
+    <div style="clear: both"></div>
+    <div class="gkt-sidebar-wrapper">
+      <%- partial('_partial/toc', { depth: 4}) %>
+    </div>
+  </aside>
+</div>
+<script>
+    (function () {
+        function resizeUArrow() {
+            var s = getDom('.u-arrow-wrapper').style
+            var pc = getDom('.gkt-book-page')
+            s.left = getPosition(pc).x - 15 + 'px';
+            s.width = pc.clientWidth + 30 + 'px';
+        }
+        resizeUArrow()
+        window.addEventListener('resize', resizeUArrow);
+        var nav = getDom('.gkt-book-menu nav');
+        var key = 'gkt_book_<%- page.book %>_' + parseInt(new Date().getTime()/1000/3600/24/7)
+        nav.scrollTo(0, window.localStorage.getItem(key) * 1)
+        nav.addEventListener('scroll', function(){ window.localStorage.setItem(key, nav.scrollTop) })
+    })();
+    (function(){
+      getDom(".gkt-book-menu-icon").addEventListener('click', function() {
+        var menu = getDom(".gkt-book-menu").classList
+        var article = getDom(".gkt-book-page").classList
+        if (menu.contains("gkt-book-menu-hidden")) {
+          menu.remove('gkt-book-menu-hidden')
+          article.add('gkt-book-menu-checked')
+        } else {
+          menu.add('gkt-book-menu-hidden')
+          article.remove('gkt-book-menu-checked')
+        }
+      })
+    })();
+</script>
